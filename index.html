@@ -429,6 +429,7 @@ body{background:var(--color-bg);min-height:100vh}
         </div>
       </div>
       <button id="signin-btn" class="btn btn-primary btn-block btn-lg" style="border-radius:var(--radius-full)">Sign in</button>
+      <button id="signin-demo-btn" type="button" class="btn btn-block" style="margin-top:10px;border-radius:var(--radius-full);background:transparent;border:1px solid var(--color-border);color:var(--color-text-muted)">Use demo credentials</button>
     </div>
 
     <!-- Sign up panel -->
@@ -899,6 +900,12 @@ async function doSignIn() {
 $('#signin-btn').addEventListener('click', doSignIn);
 $('#signin-email').addEventListener('keydown', function (e) { if (e.key === 'Enter') doSignIn(); });
 $('#signin-password').addEventListener('keydown', function (e) { if (e.key === 'Enter') doSignIn(); });
+$('#signin-demo-btn').addEventListener('click', function () {
+  $('#signin-email').value = 'demo@mesa.app';
+  $('#signin-password').value = 'mesademo123';
+  $('#signin-error').style.display = 'none';
+  doSignIn();
+});
 
 /* Sign-up */
 async function doSignUp() {
