@@ -425,19 +425,28 @@ function el(id) { return document.getElementById(id); }
 function show(id) { var e = el(id); if (e) { e.style.display = e.tagName === 'DIV' ? 'flex' : 'block'; } }
 function hide(id) { var e = el(id); if (e) e.style.display = 'none'; }
 
+// Robustly parse a timestamp that may be ISO ("...T..+00:00") or Postgres-style ("... 09:00:00+00")
+function parseTs(iso) {
+  if (iso instanceof Date) return iso;
+  if (!iso) return new Date(NaN);
+  var s = String(iso).trim().replace(' ', 'T');
+  // normalize a bare "+00" / "-00" offset to "+00:00"
+  s = s.replace(/([+-]\d{2})$/, '$1:00');
+  return new Date(s);
+}
 // Format a UTC ISO timestamp to local time in a given IANA tz
 function fmtDate(iso, tz) {
   try {
     return new Intl.DateTimeFormat('en-GB', {
       timeZone: tz || 'UTC', weekday:'short', day:'numeric', month:'short', year:'numeric',
-    }).format(new Date(iso));
-  } catch(e) { return iso ? iso.slice(0, 10) : ''; }
+    }).format(parseTs(iso));
+  } catch(e) { return iso ? String(iso).slice(0, 10) : ''; }
 }
 function fmtTime(iso, tz) {
   try {
     return new Intl.DateTimeFormat('en-GB', {
       timeZone: tz || 'UTC', hour:'2-digit', minute:'2-digit', hour12:false,
-    }).format(new Date(iso));
+    }).format(parseTs(iso));
   } catch(e) { return ''; }
 }
 function fmtDateTime(iso, tz) {
@@ -445,7 +454,7 @@ function fmtDateTime(iso, tz) {
     return new Intl.DateTimeFormat('en-GB', {
       timeZone: tz || 'UTC',
       weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit', hour12:false,
-    }).format(new Date(iso));
+    }).format(parseTs(iso));
   } catch(e) { return iso || ''; }
 }
 
@@ -801,8 +810,10 @@ async function renderSlotsStep(body) {
     });
 
     if (error) throw error;
-    state.slots = slots || [];
-    body.innerHTML = buildSlotsHTML(slots || []);
+    // RPC returns rows shaped { slot, free_tables }; the UI expects { slot_start, free_tables }.
+    var mapped = (slots || []).map(function (r) { return { slot_start: r.slot, free_tables: r.free_tables }; });
+    state.slots = mapped;
+    body.innerHTML = buildSlotsHTML(mapped);
     wireSlots(body);
   } catch (err) {
     console.error('[coverly/book] slots error', err);
@@ -1095,7 +1106,7 @@ function renderConfirmation(result, guestInfo) {
     if (!dtStart.endsWith('Z')) dtStart += 'Z';
     // End time: turn_minutes (default 90) after start
     var turnMs = (rest.default_turn_minutes || 90) * 60 * 1000;
-    var endDate = new Date(new Date(slot.slot_start).getTime() + turnMs);
+    var endDate = new Date(parseTs(slot.slot_start).getTime() + turnMs);
     var dtEnd = endDate.toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
     var icsBody = [
       'BEGIN:VCALENDAR',
