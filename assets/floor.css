@@ -1,0 +1,669 @@
+/* ============================================================================
+   Coverly — Live Floor CSS
+   Injected by floor.js; never edit index.html.
+   All colour values use existing design tokens from tokens.css.
+   ============================================================================ */
+
+/* ── Root layout ─────────────────────────────────────────────────────────── */
+.fl-root {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 64px); /* viewport minus topbar */
+  min-height: 400px;
+  overflow: hidden;
+}
+
+/* On phones the bottom-tab-bar is 60px, add safe-area */
+@media (max-width: 599px) {
+  .fl-root {
+    height: calc(100vh - 64px - 60px - env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* ── Toolbar ─────────────────────────────────────────────────────────────── */
+.fl-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.fl-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.fl-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+/* ── Room tabs ───────────────────────────────────────────────────────────── */
+.fl-room-tabs {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+  min-width: 0;
+}
+
+.fl-room-tab {
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  min-height: 34px;
+  transition: background var(--duration-fast), color var(--duration-fast);
+}
+
+.fl-room-tab:hover {
+  background: var(--color-surface-raised);
+  color: var(--color-text-primary);
+}
+
+.fl-room-tab.active {
+  background: var(--color-text-primary);
+  color: #fff;
+  border-color: var(--color-text-primary);
+}
+
+.fl-room-tab:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.fl-room-empty {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  padding: 0 var(--space-2);
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+.fl-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 var(--space-4);
+  min-height: 36px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--duration-fast), color var(--duration-fast), opacity var(--duration-fast);
+}
+
+.fl-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.fl-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.fl-btn:active   { transform: scale(0.97); }
+
+.fl-btn-primary  { background: var(--color-primary);     color: #fff; }
+.fl-btn-primary:hover { background: var(--color-primary-hover); }
+
+.fl-btn-accent   { background: var(--color-accent);      color: var(--color-accent-foreground); }
+.fl-btn-accent:hover { background: var(--color-accent-hover); }
+
+.fl-btn-success  { background: var(--color-success);     color: #fff; }
+.fl-btn-success:hover { filter: brightness(0.92); }
+
+.fl-btn-danger   { background: var(--color-destructive); color: #fff; }
+.fl-btn-danger:hover { filter: brightness(0.92); }
+
+.fl-btn-ghost    {
+  background: transparent;
+  color: var(--color-text-secondary);
+  border-color: var(--color-border);
+}
+.fl-btn-ghost:hover {
+  background: var(--color-surface-raised);
+  color: var(--color-text-primary);
+}
+
+.fl-add-room-btn {
+  font-size: 12px;
+  min-height: 34px;
+  padding: 0 var(--space-3);
+}
+
+/* ── Legend ──────────────────────────────────────────────────────────────── */
+.fl-legend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  flex-wrap: wrap;
+}
+
+.fl-legend-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 3px;
+}
+
+/* Match table state colours */
+.fl-s-open    { background: #2A7A55; }
+.fl-s-reserved{ background: #E8A040; }
+.fl-s-seated  { background: #C4522A; }
+.fl-s-dirty   { background: #9B948C; }
+.fl-s-blocked { background: transparent; border: 2px dashed #9B948C; }
+
+@media (max-width: 599px) {
+  .fl-legend { display: none; } /* hide on very small screens — save space */
+  /* Give toolbar-left full width so the edit button wraps to its own row */
+  .fl-toolbar-left { width: 100%; flex: 1 1 100%; }
+  .fl-toolbar-right { width: 100%; flex: 1 1 100%; justify-content: flex-end; }
+}
+
+/* ── Body (canvas + editor) ──────────────────────────────────────────────── */
+.fl-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.fl-canvas-wrap {
+  flex: 1;
+  overflow: auto;
+  background:
+    radial-gradient(circle, var(--color-border) 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-color: var(--color-bg);
+  position: relative;
+  min-width: 0;
+}
+
+.fl-canvas {
+  position: relative;
+  min-width: 800px;
+  min-height: 600px;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Table chips ─────────────────────────────────────────────────────────── */
+.fl-table {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  border: 2px solid transparent;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    box-shadow var(--duration-fast),
+    transform  var(--duration-fast),
+    border-color var(--duration-fast),
+    background var(--duration-fast);
+  /* min touch target */
+  min-width: 44px;
+  min-height: 44px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.fl-table:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.fl-table:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  z-index: 10;
+}
+
+.fl-table.fl-draggable {
+  cursor: grab;
+}
+
+.fl-table.fl-draggable:active {
+  cursor: grabbing;
+  z-index: 100;
+  box-shadow: var(--shadow-xl);
+  transform: scale(1.04);
+}
+
+/* Round shape */
+.fl-table.fl-round {
+  border-radius: 50%;
+}
+
+/* ── State colours ───────────────────────────────────────────────────────── */
+.fl-table.fl-s-open {
+  background: var(--color-success-light);
+  border-color: #2A7A55;
+  color: #2A7A55;
+}
+
+.fl-table.fl-s-reserved {
+  background: var(--color-accent-light);
+  border-color: var(--color-accent);
+  color: var(--color-accent-hover);
+}
+
+.fl-table.fl-s-seated {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.fl-table.fl-s-dirty {
+  background: var(--color-surface-raised);
+  border-color: var(--color-border-strong);
+  color: var(--color-text-muted);
+}
+
+.fl-table.fl-s-blocked {
+  background: transparent;
+  border: 2px dashed var(--color-border-strong);
+  color: var(--color-text-muted);
+}
+
+/* ── Table inner elements ────────────────────────────────────────────────── */
+.fl-table-label {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.01em;
+}
+
+.fl-table-seats {
+  font-size: 10px;
+  font-weight: 500;
+  opacity: 0.7;
+  margin-top: 2px;
+}
+
+.fl-table-badge {
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: 9px;
+  font-weight: 600;
+  flex-wrap: wrap;
+  padding: 0 3px;
+}
+
+.fl-vip {
+  background: var(--color-accent);
+  color: var(--color-accent-foreground);
+  border-radius: var(--radius-full);
+  padding: 1px 5px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.fl-next-time {
+  font-variant-numeric: tabular-nums;
+}
+
+.fl-party {
+  opacity: 0.8;
+}
+
+.fl-blocked-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ── Empty state ─────────────────────────────────────────────────────────── */
+.fl-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  text-align: center;
+  padding: var(--space-12) var(--space-5);
+  color: var(--color-text-muted);
+  font-size: 14px;
+  min-height: 300px;
+  position: absolute;
+  inset: 0;
+}
+
+/* ── Error state ─────────────────────────────────────────────────────────── */
+.fl-error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  text-align: center;
+  padding: var(--space-12) var(--space-5);
+  min-height: 300px;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+/* ── Loading skeleton ────────────────────────────────────────────────────── */
+.fl-loading {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.fl-loading-toolbar {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.fl-loading-canvas {
+  flex: 1;
+  position: relative;
+  padding: var(--space-5);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-content: flex-start;
+}
+
+.fl-skel-tab {
+  height: 34px;
+  width: 72px;
+  border-radius: var(--radius-full);
+}
+
+.fl-skel-table {
+  border-radius: var(--radius-md);
+}
+
+/* ── Action sheet overlay ────────────────────────────────────────────────── */
+.fl-overlay-bg {
+  position: fixed;
+  inset: 0;
+  background: var(--color-overlay);
+  z-index: 600;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+  animation: fl-overlay-in var(--duration-normal) var(--easing-decelerate);
+}
+
+@keyframes fl-overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.fl-sheet {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  width: 100%;
+  max-width: 480px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-xl);
+  animation: fl-sheet-in var(--duration-normal) var(--easing-decelerate);
+}
+
+@keyframes fl-sheet-in {
+  from { transform: translateY(24px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.fl-sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-5) var(--space-5) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  background: var(--color-surface);
+  z-index: 1;
+}
+
+.fl-sheet-info {
+  min-width: 0;
+}
+
+.fl-sheet-label {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+}
+
+.fl-sheet-meta {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+  text-transform: capitalize;
+}
+
+.fl-sheet-close {
+  flex-shrink: 0;
+  margin-left: var(--space-3);
+}
+
+.fl-sheet-body {
+  padding: var(--space-4) var(--space-5) var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.fl-sheet-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.fl-sheet-section-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.fl-sheet-action {
+  width: 100%;
+  justify-content: center;
+  min-height: 48px;
+  font-size: 15px;
+  border-radius: var(--radius-md);
+}
+
+.fl-assign-select {
+  font-size: 14px;
+}
+
+.fl-sheet-res-detail {
+  font-size: 15px;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface-raised);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+}
+
+/* ── Editor panel ────────────────────────────────────────────────────────── */
+.fl-editor-panel {
+  width: 280px;
+  flex-shrink: 0;
+  background: var(--color-surface);
+  border-left: 1px solid var(--color-border);
+  overflow-y: auto;
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+@media (max-width: 767px) {
+  .fl-editor-panel {
+    width: 220px;
+  }
+}
+
+@media (max-width: 599px) {
+  .fl-editor-panel {
+    /* On phone, slide in as a bottom sheet via fixed positioning */
+    position: fixed;
+    bottom: 60px; /* above bottom-tab-bar */
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-height: 50vh;
+    border-left: none;
+    border-top: 1px solid var(--color-border);
+    box-shadow: var(--shadow-lg);
+    z-index: 300;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    padding-bottom: env(safe-area-inset-bottom, var(--space-4));
+  }
+}
+
+.fl-ep-title {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.fl-ep-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.fl-ep-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.fl-ep-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.fl-ep-row {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.fl-ep-row .fl-ep-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.fl-ep-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fl-ep-field > label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.fl-ep-check label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 13px;
+  color: var(--color-text-primary);
+}
+
+.fl-ep-empty-msg {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  padding: var(--space-2) 0;
+}
+
+/* Table list in editor */
+.fl-ep-table-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fl-ep-table-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-2);
+  border-radius: var(--radius-sm);
+  transition: background var(--duration-fast);
+}
+
+.fl-ep-table-row:hover {
+  background: var(--color-surface-raised);
+}
+
+.fl-ep-tbl-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  min-width: 28px;
+}
+
+.fl-ep-tbl-seats {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fl-ep-edit-btn,
+.fl-ep-del-btn {
+  min-height: 28px;
+  min-width: 28px;
+  padding: 0;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
