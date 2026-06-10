@@ -421,6 +421,12 @@
   /* ======================================================================
      REALTIME subscriptions
   ====================================================================== */
+
+  // Monotonic counter so every sb.channel() call gets a unique topic name.
+  // supabase-js caches channels by topic; reusing a topic after subscribe()
+  // throws "cannot add postgres_changes callbacks … after subscribe()".
+  var _chSeq = 0;
+
   var realtime = {
     /**
      * Subscribe to reservation changes for a restaurant.
@@ -428,7 +434,7 @@
      * Returns the channel so caller can sb.removeChannel(ch).
      */
     subscribeReservations: function (restaurantId, cb) {
-      var ch = sb.channel('cov_res_' + restaurantId)
+      var ch = sb.channel('cov_res_' + restaurantId + '_' + (++_chSeq))
         .on('postgres_changes', {
           event: '*',
           schema: 'public',
@@ -443,7 +449,7 @@
      * Subscribe to table changes (position, status) for a restaurant.
      */
     subscribeTables: function (restaurantId, cb) {
-      var ch = sb.channel('cov_tbl_' + restaurantId)
+      var ch = sb.channel('cov_tbl_' + restaurantId + '_' + (++_chSeq))
         .on('postgres_changes', {
           event: '*',
           schema: 'public',
