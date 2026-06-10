@@ -405,7 +405,7 @@
       ? 'No tables in this room yet. Use the panel on the right to add one.'
       : 'No tables in this room yet. Switch to <strong>Edit floor</strong> to add tables.';
     return '<div class="fl-empty">' +
-      '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>' +
+      '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#60626e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>' +
       '<p>' + msg + '</p>' +
     '</div>';
   }
@@ -606,7 +606,7 @@
       actions += '<div class="fl-sheet-section">' +
         '<div class="fl-sheet-res-detail">' +
           (res.cov_guests ? '<strong>' + esc(res.cov_guests.name || 'Walk-in') + '</strong>' : '') +
-          '<div style="font-size:13px;color:var(--color-text-muted)">' +
+          '<div style="font-size:13px;color:#60626e">' +
             'Party of ' + esc(String(res.party_size)) + ' · ' + esc(fmtTime(res.starts_at, (getRestaurant()||{}).timezone)) +
           '</div>' +
         '</div>' +
@@ -908,15 +908,15 @@
     return '<ul class="fl-ep-table-list" role="list">' +
       _rooms.map(function (room) {
         var isActive = room.id === _activeRoom;
-        return '<li class="fl-ep-table-row" role="listitem" ' + (isActive ? 'style="background:var(--color-primary-light)"' : '') + '>' +
-          '<span class="fl-ep-tbl-label" style="' + (isActive ? 'color:var(--color-primary)' : '') + '">' + esc(room.name) + (isActive ? ' ✓' : '') + '</span>' +
+        return '<li class="fl-ep-table-row' + (isActive ? ' fl-ep-room-active' : '') + '" role="listitem">' +
+          '<span class="fl-ep-tbl-label" style="' + (isActive ? 'color:var(--fl-copper,#c2703d)' : '') + '">' + esc(room.name) + (isActive ? ' ✓' : '') + '</span>' +
           '<button class="fl-btn fl-btn-ghost fl-ep-rename-room-btn" data-room-id="' + esc(room.id) + '" data-room-name="' + esc(room.name) + '" ' +
             'aria-label="Rename room ' + esc(room.name) + '" style="min-height:28px;padding:0 var(--space-2);font-size:12px">' +
             '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Rename' +
           '</button>' +
           '<button class="fl-btn fl-btn-ghost fl-ep-del-room-btn" data-room-id="' + esc(room.id) + '" data-room-name="' + esc(room.name) + '" ' +
-            'aria-label="Delete room ' + esc(room.name) + '" style="min-height:28px;padding:0 var(--space-2);font-size:12px;color:var(--color-destructive)">' +
-            '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--color-destructive)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Del' +
+            'aria-label="Delete room ' + esc(room.name) + '" style="min-height:28px;padding:0 var(--space-2);font-size:12px;color:#f56565">' +
+            '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#f56565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Del' +
           '</button>' +
         '</li>';
       }).join('') +
@@ -1047,7 +1047,7 @@
               '<label for="fl-rr-name">New room name</label>' +
               '<input id="fl-rr-name" class="input" type="text" value="' + esc(currentName) + '" maxlength="60" required style="min-height:40px">' +
             '</div>' +
-            '<div id="fl-rr-err" style="color:var(--color-destructive);font-size:13px;display:none"></div>' +
+            '<div id="fl-rr-err" style="color:#f56565;font-size:13px;display:none"></div>' +
             '<button id="fl-rr-submit" class="fl-btn fl-btn-primary" style="width:100%;justify-content:center;margin-top:var(--space-2)">Save name</button>' +
           '</div>' +
         '</div>' +
@@ -1284,7 +1284,7 @@
     if (!_sectionEl) return;
     _sectionEl.innerHTML =
       '<div class="fl-error-state">' +
-        '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--color-destructive)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' +
+        '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#f56565" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' +
         '<p>Failed to load the floor</p>' +
         '<button class="fl-btn fl-btn-primary" id="fl-retry-btn">Retry</button>' +
       '</div>';

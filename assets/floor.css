@@ -1,19 +1,69 @@
 /* ============================================================================
-   Coverly — Live Floor CSS
+   Coverly — Live Floor CSS  (MIDNIGHT & COPPER — dark premium with brand)
    Injected by floor.js; never edit index.html.
-   All colour values use existing design tokens from tokens.css.
+   Palette rule: deep charcoal canvas + copper (#c2703d) / honey-gold (#f0b51d)
+   brand accents on CHROME only (toolbar, active tab, selected ring, primary
+   buttons, focus rings, editor highlights).
+   Status colours stay semantic and NEVER use brand hues:
+     open=green, reserved=amber, seated=red, dirty=grey, blocked=dashed grey.
    ============================================================================ */
+
+/* ── Dark palette custom properties (scoped to floor only) ───────────────── */
+:root {
+  --fl-bg:              #0d0f14;
+  --fl-bg-vignette:     radial-gradient(ellipse at center, #13161f 0%, #0d0f14 100%);
+  --fl-surface:         #14171f;
+  --fl-surface-raised:  #1c2030;
+  --fl-border:          rgba(255,255,255,0.08);
+  --fl-border-strong:   rgba(255,255,255,0.14);
+  --fl-text-primary:    #f0eff2;
+  --fl-text-secondary:  #a8a9b4;
+  --fl-text-muted:      #60626e;
+  --fl-overlay:         rgba(0,0,0,0.75);
+
+  /* Brand accent — copper & honey-gold (chrome only, not status) */
+  --fl-copper:          #c2703d;
+  --fl-copper-dim:      rgba(194,112,61,0.18);
+  --fl-copper-glow:     rgba(194,112,61,0.32);
+  --fl-copper-border:   rgba(194,112,61,0.55);
+  --fl-gold:            #f0b51d;
+  --fl-gold-dim:        rgba(240,181,29,0.15);
+
+  /* Status colours — status meaning only, never brand */
+  --fl-open-bg:         #0d2e1d;
+  --fl-open-border:     #1e6b40;
+  --fl-open-text:       #4cd48a;
+  --fl-open-glow:       rgba(30,107,64,0.35);
+
+  --fl-reserved-bg:     #2b1e07;
+  --fl-reserved-border: #c28a1a;
+  --fl-reserved-text:   #f5c045;
+  --fl-reserved-glow:   rgba(194,138,26,0.35);
+
+  --fl-seated-bg:       #2a0d0d;
+  --fl-seated-border:   #c03030;
+  --fl-seated-text:     #f56565;
+  --fl-seated-glow:     rgba(192,48,48,0.35);
+
+  --fl-dirty-bg:        #1a1a1e;
+  --fl-dirty-border:    #3e3f4a;
+  --fl-dirty-text:      #7a7b87;
+
+  --fl-blocked-border:  #3e3f4a;
+  --fl-blocked-text:    #5a5b67;
+}
 
 /* ── Root layout ─────────────────────────────────────────────────────────── */
 .fl-root {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 64px); /* viewport minus topbar */
+  height: calc(100vh - 64px);
   min-height: 400px;
   overflow: hidden;
+  background: var(--fl-bg);
+  color: var(--fl-text-primary);
 }
 
-/* On phones the bottom-tab-bar is 60px, add safe-area */
 @media (max-width: 599px) {
   .fl-root {
     height: calc(100vh - 64px - 60px - env(safe-area-inset-bottom, 0px));
@@ -24,10 +74,12 @@
 .fl-toolbar {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--fl-surface);
+  /* Copper top-border accent — premium chrome detail */
+  border-top: 2px solid var(--fl-copper);
+  border-bottom: 1px solid var(--fl-border);
   flex-shrink: 0;
   flex-wrap: wrap;
   min-width: 0;
@@ -36,7 +88,7 @@
 .fl-toolbar-left {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: 8px;
   flex: 1;
   min-width: 0;
   flex-wrap: wrap;
@@ -45,7 +97,7 @@
 .fl-toolbar-right {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: 12px;
   flex-shrink: 0;
   flex-wrap: wrap;
   min-width: 0;
@@ -61,39 +113,42 @@
 }
 
 .fl-room-tab {
-  padding: 6px 14px;
-  border-radius: var(--radius-full);
-  font-size: 13px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 12px;
   font-weight: 500;
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
-  color: var(--color-text-secondary);
+  letter-spacing: 0.02em;
+  border: 1px solid var(--fl-border-strong);
+  background: transparent;
+  color: var(--fl-text-secondary);
   cursor: pointer;
   white-space: nowrap;
-  min-height: 34px;
-  transition: background var(--duration-fast), color var(--duration-fast);
+  min-height: 32px;
+  transition: background 120ms, color 120ms, border-color 120ms;
 }
 
 .fl-room-tab:hover {
-  background: var(--color-surface-raised);
-  color: var(--color-text-primary);
+  background: var(--fl-surface-raised);
+  color: var(--fl-text-primary);
+  border-color: rgba(255,255,255,0.22);
 }
 
 .fl-room-tab.active {
-  background: var(--color-text-primary);
-  color: #fff;
-  border-color: var(--color-text-primary);
+  background: var(--fl-copper-dim);
+  color: #f0eff2;
+  border-color: var(--fl-copper-border);
+  box-shadow: 0 0 0 1px var(--fl-copper-glow) inset;
 }
 
 .fl-room-tab:focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid var(--fl-gold);
   outline-offset: 2px;
 }
 
 .fl-room-empty {
-  font-size: 13px;
-  color: var(--color-text-muted);
-  padding: 0 var(--space-2);
+  font-size: 12px;
+  color: var(--fl-text-muted);
+  padding: 0 8px;
 }
 
 /* ── Buttons ─────────────────────────────────────────────────────────────── */
@@ -102,51 +157,84 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 0 var(--space-4);
-  min-height: 36px;
-  border-radius: var(--radius-md);
+  padding: 0 14px;
+  min-height: 34px;
+  border-radius: 8px;
   font-size: 13px;
   font-weight: 500;
   border: 1px solid transparent;
   cursor: pointer;
   white-space: nowrap;
-  transition: background var(--duration-fast), color var(--duration-fast), opacity var(--duration-fast);
+  transition: background 120ms, color 120ms, opacity 120ms, border-color 120ms;
+  background: transparent;
+  color: var(--fl-text-primary);
 }
 
 .fl-btn:focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid var(--fl-gold);
   outline-offset: 2px;
 }
 
-.fl-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.fl-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .fl-btn:active   { transform: scale(0.97); }
 
-.fl-btn-primary  { background: var(--color-primary);     color: #fff; }
-.fl-btn-primary:hover { background: var(--color-primary-hover); }
+.fl-btn-primary {
+  background: var(--fl-copper-dim);
+  color: #f0c49a;
+  border-color: var(--fl-copper-border);
+}
+.fl-btn-primary:hover {
+  background: rgba(194,112,61,0.30);
+  border-color: var(--fl-copper);
+  color: #ffd8b8;
+}
 
-.fl-btn-accent   { background: var(--color-accent);      color: var(--color-accent-foreground); }
-.fl-btn-accent:hover { background: var(--color-accent-hover); }
+/* accent = amber/gold for walkin (seat) */
+.fl-btn-accent {
+  background: rgba(245,192,69,0.16);
+  color: #f5c045;
+  border-color: rgba(245,192,69,0.35);
+}
+.fl-btn-accent:hover {
+  background: rgba(245,192,69,0.25);
+  border-color: rgba(245,192,69,0.55);
+}
 
-.fl-btn-success  { background: var(--color-success);     color: #fff; }
-.fl-btn-success:hover { filter: brightness(0.92); }
+.fl-btn-success {
+  background: rgba(76,212,138,0.14);
+  color: #4cd48a;
+  border-color: rgba(76,212,138,0.35);
+}
+.fl-btn-success:hover {
+  background: rgba(76,212,138,0.24);
+  border-color: rgba(76,212,138,0.55);
+}
 
-.fl-btn-danger   { background: var(--color-destructive); color: #fff; }
-.fl-btn-danger:hover { filter: brightness(0.92); }
+.fl-btn-danger {
+  background: rgba(245,101,101,0.14);
+  color: #f56565;
+  border-color: rgba(245,101,101,0.35);
+}
+.fl-btn-danger:hover {
+  background: rgba(245,101,101,0.24);
+  border-color: rgba(245,101,101,0.5);
+}
 
-.fl-btn-ghost    {
+.fl-btn-ghost {
   background: transparent;
-  color: var(--color-text-secondary);
-  border-color: var(--color-border);
+  color: var(--fl-text-secondary);
+  border-color: var(--fl-border-strong);
 }
 .fl-btn-ghost:hover {
-  background: var(--color-surface-raised);
-  color: var(--color-text-primary);
+  background: var(--fl-surface-raised);
+  color: var(--fl-text-primary);
+  border-color: rgba(255,255,255,0.22);
 }
 
 .fl-add-room-btn {
   font-size: 12px;
-  min-height: 34px;
-  padding: 0 var(--space-3);
+  min-height: 32px;
+  padding: 0 10px;
 }
 
 /* ── Legend ──────────────────────────────────────────────────────────────── */
@@ -155,29 +243,35 @@
   align-items: center;
   gap: 10px;
   font-size: 11px;
-  color: var(--color-text-muted);
+  color: var(--fl-text-muted);
   flex-wrap: wrap;
+  letter-spacing: 0.02em;
 }
 
 .fl-legend-dot {
   display: inline-block;
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   margin-right: 3px;
+  flex-shrink: 0;
 }
 
-/* Match table state colours */
-.fl-s-open    { background: #2A7A55; }
-.fl-s-reserved{ background: #E8A040; }
-.fl-s-seated  { background: #C4522A; }
-.fl-s-dirty   { background: #9B948C; }
-.fl-s-blocked { background: transparent; border: 2px dashed #9B948C; }
+.fl-s-open    { background: var(--fl-open-border); }
+.fl-s-reserved{ background: var(--fl-reserved-border); }
+.fl-s-seated  { background: var(--fl-seated-border); }
+.fl-s-dirty   { background: var(--fl-dirty-border); }
+.fl-s-blocked {
+  background: transparent;
+  border: 2px dashed var(--fl-blocked-border);
+  border-radius: 50%;
+  width: 9px;
+  height: 9px;
+}
 
 @media (max-width: 599px) {
-  .fl-legend { display: none; } /* hide on very small screens — save space */
-  /* Give toolbar-left full width so the edit button wraps to its own row */
-  .fl-toolbar-left { width: 100%; flex: 1 1 100%; }
+  .fl-legend { display: none; }
+  .fl-toolbar-left  { width: 100%; flex: 1 1 100%; }
   .fl-toolbar-right { width: 100%; flex: 1 1 100%; justify-content: flex-end; }
 }
 
@@ -189,15 +283,18 @@
   min-height: 0;
 }
 
+/* ── Canvas wrap — dark floor with subtle vignette ───────────────────────── */
 .fl-canvas-wrap {
   flex: 1;
   overflow: auto;
-  background:
-    radial-gradient(circle, var(--color-border) 1px, transparent 1px);
-  background-size: 24px 24px;
-  background-color: var(--color-bg);
+  /* Dot-grid on dark: very subtle */
+  background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+  background-color: var(--fl-bg);
   position: relative;
   min-width: 0;
+  /* Vignette shadow inset around the edges */
+  box-shadow: inset 0 0 80px rgba(0,0,0,0.55);
 }
 
 .fl-canvas {
@@ -215,30 +312,30 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-md);
+  /* Default rounded-square; round class overrides */
+  border-radius: 18px;
   border: 2px solid transparent;
   cursor: pointer;
   user-select: none;
   transition:
-    box-shadow var(--duration-fast),
-    transform  var(--duration-fast),
-    border-color var(--duration-fast),
-    background var(--duration-fast);
-  /* min touch target */
+    box-shadow 140ms ease,
+    transform   140ms ease,
+    border-color 140ms ease,
+    background   140ms ease;
   min-width: 44px;
   min-height: 44px;
-  box-shadow: var(--shadow-sm);
   overflow: hidden;
+  /* Soft inner highlight line at top */
+  background-clip: padding-box;
 }
 
 .fl-table:focus-visible {
-  outline: 3px solid var(--color-primary);
-  outline-offset: 2px;
+  outline: 2px solid var(--fl-gold);
+  outline-offset: 3px;
 }
 
 .fl-table:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-3px) scale(1.02);
   z-index: 10;
 }
 
@@ -249,64 +346,105 @@
 .fl-table.fl-draggable:active {
   cursor: grabbing;
   z-index: 100;
-  box-shadow: var(--shadow-xl);
-  transform: scale(1.04);
+  transform: scale(1.06);
 }
 
-/* Round shape */
+/* Round shape — circles for 2-tops */
 .fl-table.fl-round {
   border-radius: 50%;
 }
 
-/* ── State colours ───────────────────────────────────────────────────────── */
+/* ── State colours ── status carries all meaning ──────────────────────────── */
+
+/* OPEN — calm green */
 .fl-table.fl-s-open {
-  background: var(--color-success-light);
-  border-color: #2A7A55;
-  color: #2A7A55;
+  background: var(--fl-open-bg);
+  border-color: var(--fl-open-border);
+  color: var(--fl-open-text);
+  box-shadow:
+    0 4px 16px rgba(0,0,0,0.55),
+    0 0 0 1px rgba(30,107,64,0.25),
+    inset 0 1px 0 rgba(76,212,138,0.12);
+}
+.fl-table.fl-s-open:hover {
+  box-shadow:
+    0 8px 28px rgba(0,0,0,0.65),
+    0 0 20px var(--fl-open-glow),
+    inset 0 1px 0 rgba(76,212,138,0.18);
 }
 
+/* RESERVED — amber/gold */
 .fl-table.fl-s-reserved {
-  background: var(--color-accent-light);
-  border-color: var(--color-accent);
-  color: var(--color-accent-hover);
+  background: var(--fl-reserved-bg);
+  border-color: var(--fl-reserved-border);
+  color: var(--fl-reserved-text);
+  box-shadow:
+    0 4px 16px rgba(0,0,0,0.55),
+    0 0 0 1px rgba(194,138,26,0.25),
+    inset 0 1px 0 rgba(245,192,69,0.12);
+}
+.fl-table.fl-s-reserved:hover {
+  box-shadow:
+    0 8px 28px rgba(0,0,0,0.65),
+    0 0 20px var(--fl-reserved-glow),
+    inset 0 1px 0 rgba(245,192,69,0.18);
 }
 
+/* SEATED — red */
 .fl-table.fl-s-seated {
-  background: var(--color-primary-light);
-  border-color: var(--color-primary);
-  color: var(--color-primary);
+  background: var(--fl-seated-bg);
+  border-color: var(--fl-seated-border);
+  color: var(--fl-seated-text);
+  box-shadow:
+    0 4px 16px rgba(0,0,0,0.55),
+    0 0 0 1px rgba(192,48,48,0.25),
+    inset 0 1px 0 rgba(245,101,101,0.12);
+}
+.fl-table.fl-s-seated:hover {
+  box-shadow:
+    0 8px 28px rgba(0,0,0,0.65),
+    0 0 20px var(--fl-seated-glow),
+    inset 0 1px 0 rgba(245,101,101,0.18);
 }
 
+/* DIRTY — muted grey */
 .fl-table.fl-s-dirty {
-  background: var(--color-surface-raised);
-  border-color: var(--color-border-strong);
-  color: var(--color-text-muted);
+  background: var(--fl-dirty-bg);
+  border-color: var(--fl-dirty-border);
+  color: var(--fl-dirty-text);
+  box-shadow:
+    0 4px 14px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.04);
 }
 
+/* BLOCKED — dashed grey outline, transparent fill */
 .fl-table.fl-s-blocked {
-  background: transparent;
-  border: 2px dashed var(--color-border-strong);
-  color: var(--color-text-muted);
+  background: rgba(255,255,255,0.025);
+  border: 2px dashed var(--fl-blocked-border);
+  color: var(--fl-blocked-text);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.4);
 }
 
 /* ── Table inner elements ────────────────────────────────────────────────── */
 .fl-table-label {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   line-height: 1;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
 }
 
 .fl-table-seats {
   font-size: 10px;
   font-weight: 500;
-  opacity: 0.7;
-  margin-top: 2px;
+  opacity: 0.65;
+  margin-top: 3px;
+  letter-spacing: 0.03em;
 }
 
 .fl-table-badge {
   position: absolute;
-  bottom: 2px;
+  bottom: 3px;
   left: 0;
   right: 0;
   display: flex;
@@ -316,32 +454,36 @@
   font-size: 9px;
   font-weight: 600;
   flex-wrap: wrap;
-  padding: 0 3px;
+  padding: 0 4px;
 }
 
+/* VIP badge — amber pill */
 .fl-vip {
-  background: var(--color-accent);
-  color: var(--color-accent-foreground);
-  border-radius: var(--radius-full);
+  background: rgba(194,138,26,0.35);
+  color: #f5c045;
+  border: 1px solid rgba(194,138,26,0.5);
+  border-radius: 999px;
   padding: 1px 5px;
   font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
 }
 
 .fl-next-time {
   font-variant-numeric: tabular-nums;
+  opacity: 0.9;
 }
 
 .fl-party {
-  opacity: 0.8;
+  opacity: 0.75;
 }
 
 .fl-blocked-label {
   font-size: 9px;
   font-weight: 600;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+  opacity: 0.7;
 }
 
 /* ── Empty state ─────────────────────────────────────────────────────────── */
@@ -350,10 +492,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-4);
+  gap: 16px;
   text-align: center;
-  padding: var(--space-12) var(--space-5);
-  color: var(--color-text-muted);
+  padding: 48px 20px;
+  color: var(--fl-text-muted);
   font-size: 14px;
   min-height: 300px;
   position: absolute;
@@ -366,12 +508,13 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-4);
+  gap: 16px;
   text-align: center;
-  padding: var(--space-12) var(--space-5);
+  padding: 48px 20px;
   min-height: 300px;
-  color: var(--color-text-secondary);
+  color: var(--fl-text-secondary);
   font-size: 14px;
+  background: var(--fl-bg);
 }
 
 /* ── Loading skeleton ────────────────────────────────────────────────────── */
@@ -380,47 +523,68 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+  background: var(--fl-bg);
 }
 
 .fl-loading-toolbar {
   display: flex;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-4);
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--fl-surface);
+  border-bottom: 1px solid var(--fl-border);
 }
 
 .fl-loading-canvas {
   flex: 1;
   position: relative;
-  padding: var(--space-5);
+  padding: 20px;
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-4);
+  gap: 16px;
   align-content: flex-start;
 }
 
 .fl-skel-tab {
-  height: 34px;
+  height: 32px;
   width: 72px;
-  border-radius: var(--radius-full);
+  border-radius: 999px;
 }
 
 .fl-skel-table {
-  border-radius: var(--radius-md);
+  border-radius: 18px;
+}
+
+/* Override global skeleton to use dark palette */
+.fl-loading .skeleton,
+.fl-skel-tab.skeleton,
+.fl-skel-table.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--fl-surface-raised) 25%,
+    rgba(255,255,255,0.07) 50%,
+    var(--fl-surface-raised) 75%
+  );
+  background-size: 400% 100%;
+  animation: fl-shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes fl-shimmer {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
 }
 
 /* ── Action sheet overlay ────────────────────────────────────────────────── */
 .fl-overlay-bg {
   position: fixed;
   inset: 0;
-  background: var(--color-overlay);
+  background: var(--fl-overlay);
   z-index: 600;
   display: flex;
   align-items: flex-end;
   justify-content: center;
   padding: 0;
-  animation: fl-overlay-in var(--duration-normal) var(--easing-decelerate);
+  animation: fl-overlay-in 180ms ease;
+  backdrop-filter: blur(2px);
 }
 
 @keyframes fl-overlay-in {
@@ -429,18 +593,22 @@
 }
 
 .fl-sheet {
-  background: var(--color-surface);
-  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  background: var(--fl-surface);
+  border-radius: 20px 20px 0 0;
+  /* Copper top-edge — brand chrome detail on the sheet */
+  border-top: 2px solid var(--fl-copper);
   width: 100%;
   max-width: 480px;
   max-height: 85vh;
   overflow-y: auto;
-  box-shadow: var(--shadow-xl);
-  animation: fl-sheet-in var(--duration-normal) var(--easing-decelerate);
+  box-shadow:
+    0 -8px 40px rgba(0,0,0,0.7),
+    0 -1px 0 var(--fl-border-strong);
+  animation: fl-sheet-in 200ms cubic-bezier(0.2, 0.8, 0.3, 1);
 }
 
 @keyframes fl-sheet-in {
-  from { transform: translateY(24px); opacity: 0; }
+  from { transform: translateY(28px); opacity: 0; }
   to   { transform: translateY(0);    opacity: 1; }
 }
 
@@ -448,11 +616,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-5) var(--space-5) var(--space-4);
-  border-bottom: 1px solid var(--color-border);
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--fl-border);
   position: sticky;
   top: 0;
-  background: var(--color-surface);
+  background: var(--fl-surface);
   z-index: 1;
 }
 
@@ -464,40 +632,50 @@
   font-size: 18px;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: var(--color-text-primary);
+  color: var(--fl-text-primary);
 }
 
 .fl-sheet-meta {
   font-size: 13px;
-  color: var(--color-text-muted);
+  color: var(--fl-text-muted);
   margin-top: 2px;
   text-transform: capitalize;
 }
 
 .fl-sheet-close {
   flex-shrink: 0;
-  margin-left: var(--space-3);
+  margin-left: 12px;
+  color: var(--fl-text-muted) !important;
+  border-color: var(--fl-border-strong) !important;
+  background: var(--fl-surface-raised) !important;
+  min-height: 32px;
+  min-width: 32px;
+  padding: 0;
+}
+.fl-sheet-close:hover {
+  color: var(--fl-text-primary) !important;
+  background: rgba(255,255,255,0.1) !important;
 }
 
 .fl-sheet-body {
-  padding: var(--space-4) var(--space-5) var(--space-8);
+  padding: 16px 20px 32px;
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: 12px;
 }
 
 .fl-sheet-section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: 8px;
 }
 
 .fl-sheet-section-label {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--fl-text-muted);
 }
 
 .fl-sheet-action {
@@ -505,89 +683,94 @@
   justify-content: center;
   min-height: 48px;
   font-size: 15px;
-  border-radius: var(--radius-md);
+  border-radius: 12px;
 }
 
+/* Force dark selects inside the sheet */
 .fl-assign-select {
   font-size: 14px;
+  background: var(--fl-surface-raised) !important;
+  border-color: var(--fl-border-strong) !important;
+  color: var(--fl-text-primary) !important;
 }
 
 .fl-sheet-res-detail {
   font-size: 15px;
-  padding: var(--space-3) var(--space-4);
-  background: var(--color-surface-raised);
-  border-radius: var(--radius-md);
-  color: var(--color-text-primary);
+  padding: 12px 16px;
+  background: var(--fl-surface-raised);
+  border-radius: 12px;
+  border: 1px solid var(--fl-border);
+  color: var(--fl-text-primary);
 }
 
 /* ── Editor panel ────────────────────────────────────────────────────────── */
 .fl-editor-panel {
-  width: 280px;
+  width: 268px;
   flex-shrink: 0;
-  background: var(--color-surface);
-  border-left: 1px solid var(--color-border);
+  background: var(--fl-surface);
+  border-left: 1px solid var(--fl-border);
   overflow-y: auto;
-  padding: var(--space-4);
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: 16px;
+  color: var(--fl-text-primary);
 }
 
 @media (max-width: 767px) {
   .fl-editor-panel {
-    width: 220px;
+    width: 210px;
   }
 }
 
 @media (max-width: 599px) {
   .fl-editor-panel {
-    /* On phone, slide in as a bottom sheet via fixed positioning */
     position: fixed;
-    bottom: 60px; /* above bottom-tab-bar */
+    bottom: 60px;
     left: 0;
     right: 0;
     width: 100%;
     max-height: 50vh;
     border-left: none;
-    border-top: 1px solid var(--color-border);
-    box-shadow: var(--shadow-lg);
+    border-top: 1px solid var(--fl-border-strong);
+    box-shadow: 0 -8px 32px rgba(0,0,0,0.7);
     z-index: 300;
-    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-    padding-bottom: env(safe-area-inset-bottom, var(--space-4));
+    border-radius: 20px 20px 0 0;
+    padding-bottom: env(safe-area-inset-bottom, 16px);
   }
 }
 
 .fl-ep-title {
-  font-size: 14px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
-  padding-bottom: var(--space-2);
-  border-bottom: 1px solid var(--color-border);
+  color: var(--fl-text-muted);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--fl-border);
 }
 
 .fl-ep-section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: 10px;
 }
 
 .fl-ep-section-title {
   font-size: 13px;
   font-weight: 600;
-  color: var(--color-text-secondary);
+  color: var(--fl-text-secondary);
 }
 
 .fl-ep-form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: 10px;
 }
 
 .fl-ep-row {
   display: flex;
-  gap: var(--space-2);
+  gap: 8px;
 }
 
 .fl-ep-row .fl-ep-field {
@@ -604,21 +787,43 @@
 .fl-ep-field > label {
   font-size: 12px;
   font-weight: 500;
-  color: var(--color-text-secondary);
+  color: var(--fl-text-secondary);
+}
+
+/* Dark form inputs inside the editor panel */
+.fl-editor-panel .input,
+.fl-editor-panel .select,
+.fl-sheet-body .input,
+.fl-sheet-body .select {
+  background: var(--fl-surface-raised) !important;
+  border-color: var(--fl-border-strong) !important;
+  color: var(--fl-text-primary) !important;
+}
+.fl-editor-panel .input:focus,
+.fl-editor-panel .select:focus,
+.fl-sheet-body .input:focus,
+.fl-sheet-body .select:focus {
+  border-color: var(--fl-copper-border) !important;
+  box-shadow: 0 0 0 3px var(--fl-copper-dim) !important;
+  outline: none;
+}
+.fl-editor-panel .input::placeholder {
+  color: var(--fl-text-muted) !important;
 }
 
 .fl-ep-check label {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: 8px;
   font-size: 13px;
-  color: var(--color-text-primary);
+  color: var(--fl-text-primary);
+  cursor: pointer;
 }
 
 .fl-ep-empty-msg {
   font-size: 13px;
-  color: var(--color-text-muted);
-  padding: var(--space-2) 0;
+  color: var(--fl-text-muted);
+  padding: 4px 0;
 }
 
 /* Table list in editor */
@@ -632,26 +837,26 @@
 .fl-ep-table-row {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-2);
-  border-radius: var(--radius-sm);
-  transition: background var(--duration-fast);
+  gap: 8px;
+  padding: 6px 6px;
+  border-radius: 8px;
+  transition: background 120ms;
 }
 
 .fl-ep-table-row:hover {
-  background: var(--color-surface-raised);
+  background: var(--fl-surface-raised);
 }
 
 .fl-ep-tbl-label {
   font-size: 13px;
   font-weight: 600;
-  color: var(--color-text-primary);
+  color: var(--fl-text-primary);
   min-width: 28px;
 }
 
 .fl-ep-tbl-seats {
   font-size: 11px;
-  color: var(--color-text-muted);
+  color: var(--fl-text-muted);
   flex: 1;
   min-width: 0;
   overflow: hidden;
@@ -664,6 +869,19 @@
   min-height: 28px;
   min-width: 28px;
   padding: 0;
-  border-radius: var(--radius-sm);
+  border-radius: 6px;
   flex-shrink: 0;
+}
+
+/* Active-room highlight in editor room list — copper brand accent */
+.fl-ep-room-active {
+  background: var(--fl-copper-dim) !important;
+  border-left: 2px solid var(--fl-copper);
+  padding-left: 4px;
+}
+
+/* Error dialog inputs */
+#fl-rr-err,
+#fl-ar-err {
+  color: #f56565;
 }
